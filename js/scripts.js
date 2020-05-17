@@ -24,7 +24,7 @@ const promise = fetchData(apiUrl)
         return resultsArray;
     })
     
-    
+
 //testing
 // const imageUrl = promise.then(results => {
 //     console.log(results[0].name.first)
@@ -54,7 +54,7 @@ function createCardDivs(data) {
 
 //function to display modal window of a selected random user
 function generateModalHTML() {
-    const ModalHTML = `
+    const modalHTML = `
     <div class="modal">
         <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
         <div class="modal-info-container">
@@ -69,7 +69,7 @@ function generateModalHTML() {
      </div>`;
     const modal = document.createElement('div');
     modal.className = "modal-container";
-    modal.innerHTML = ModalHTML;
+    modal.innerHTML += modalHTML;
     body.insertBefore(modal, script);
 }
 
@@ -77,6 +77,7 @@ function generateModalHTML() {
 function addModalInfo(userHTML) {
     let user = userHTML.closest('.card');
     let userChildren = user.childNodes;
+    //const modal = document.querySelector('.modal');
 
     let img = document.querySelector('.modal-img');
     let modalName = document.querySelector('div.modal-info-container h3');
@@ -89,19 +90,22 @@ function addModalInfo(userHTML) {
     img.src = userChildren[1].firstElementChild.src;
     modalName.textContent = userChildren[3].firstElementChild.textContent;
     email.textContent = userChildren[13].textContent;
-    city.textContent = document.querySelector('#city').textContent;
+    city.textContent = userChildren[9].textContent;
     phone.textContent = userChildren[5].textContent;
     addy.textContent = userChildren[7].textContent;
     dob.textContent = userChildren[11].textContent;
 }
 
+//calling generateModalHTML
+//generateModalHTML();
 
 //event listener for clicks to display modal window
 gallery.addEventListener('click', (e) => {
     // let user = e.target.closest('.card');
     // let userChildren = user.childNodes;
-    // console.log(e.target.parentNode.className);
+    console.log(e.target.parentNode.className);
     // console.log(userChildren[13].textContent)
+
     if (e.target.parentNode.className === 'card-info-container' || e.target.parentNode.className === 'card' || e.target.parentNode.className === 'card-img-container' || e.target.className === 'card') {
         generateModalHTML();
         addModalInfo(e.target);
@@ -110,8 +114,16 @@ gallery.addEventListener('click', (e) => {
         xButton.addEventListener('click', (e) => {
             const modalDiv = document.querySelector('.modal-container');
             modalDiv.style.display = 'none';
-            modalDiv.innerHTML = '';
+            modalDiv.remove();
         });
-    }
+    } 
 });
 
+// body.addEventListener('click', (e) => {
+//     console.log(e.target.parentNode.className);
+//     if (e.target.parentNode.className === 'modal-close-btn') {
+//         const modalDiv = document.querySelector('.modal-container');
+//         modalDiv.style.display = 'none';
+//         modalDiv.innerHTML = '';
+//     }
+// });
