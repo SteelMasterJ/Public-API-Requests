@@ -6,6 +6,7 @@ const apiUrl = 'https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ie,au,es,d
 
 
 //function to fetch data and return it or throw error and log error to console
+//@param {object} url   The url that is used to generate 12 results from various countries.
 async function fetchData(url) {
     try {
         const res = await fetch(url);
@@ -16,23 +17,20 @@ async function fetchData(url) {
     }
   }
 
-//this activates the fetch and returns the results along with calling the createCardDivs function
+//this activates the fetch with the URL from randomUser.me and returns the parsed results along with calling the createCardDivs function
 const promise = fetchData(apiUrl)
     .then(res => {
         const resultsArray = res.results;
         createCardDivs(resultsArray);
         return resultsArray;
     })
-    
 
-//testing
-// const imageUrl = promise.then(results => {
-//     console.log(results[0].name.first)
-// })
 
-//function to create card Divs for each of the returned results
+//function to create card Divs for each of the returned results from the API request
+//This also creates a few hidden div elements that stores the data used to populate the Modal Window with info.
+//@param {object} data   The parsed results array from the called API fetch.
 function createCardDivs(data) {
-    const cardDivs = data.map((item, index, array) => `
+    const cardDivs = data.map((item) => `
     <div class="card">
         <div class="card-img-container">
             <img class="card-img" src="${item.picture.large}" alt="profile picture">
@@ -52,7 +50,7 @@ function createCardDivs(data) {
     gallery.innerHTML = cardDivs;
 }
 
-//function to display modal window of a selected random user
+//function to create all the HTML for the modal window and place it in the HTML.
 function generateModalHTML() {
     const modalHTML = `
     <div class="modal">
@@ -73,7 +71,11 @@ function generateModalHTML() {
     body.insertBefore(modal, script);
 }
 
-//function to populate the modal window with data
+
+/**
+ * function to populate the modal window with data from the selected elements HTML, this also parsing the JSON date string to a readable version.
+ * @param {object} userHTML   The selected user HTML element from the gallery.
+ */
 function addModalInfo(userHTML) {
     let user = userHTML.closest('.card');
     let userChildren = user.childNodes;
@@ -93,13 +95,16 @@ function addModalInfo(userHTML) {
     city.textContent = userChildren[9].textContent;
     phone.textContent = userChildren[5].textContent;
     addy.textContent = userChildren[7].textContent;
-    dob.textContent = userChildren[11].textContent;
+
+
+    const date = new Date(userChildren[11].textContent);
+    const parsedDate = date.toLocaleDateString();
+    dob.textContent = parsedDate;
 }
 
-//calling generateModalHTML
-//generateModalHTML();
 
-//event listener for clicks to display modal window
+//event listener that listens for clicks a card element in the gallery div, and calls the generate modal function and adds the modal info to that new modal.
+//It also adds a click event listener to the close button and when that is clicked it removes it entirely.
 gallery.addEventListener('click', (e) => {
     // let user = e.target.closest('.card');
     // let userChildren = user.childNodes;
@@ -118,12 +123,3 @@ gallery.addEventListener('click', (e) => {
         });
     } 
 });
-
-// body.addEventListener('click', (e) => {
-//     console.log(e.target.parentNode.className);
-//     if (e.target.parentNode.className === 'modal-close-btn') {
-//         const modalDiv = document.querySelector('.modal-container');
-//         modalDiv.style.display = 'none';
-//         modalDiv.innerHTML = '';
-//     }
-// });
